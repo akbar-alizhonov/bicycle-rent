@@ -2,13 +2,6 @@ version: '3.8'
 
 
 services:
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    ports:
-      - "5432:5432"
-    env_file:
-      - src/.env
   
   backend:
     container_name: backend
@@ -17,4 +10,19 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
+      - postgres-db
+    env_file:
+      - .env
+    command: bash -c 'while !</dev/tcp/postgres-db/5432; do sleep 1; done; python3 manage.py runserver 0.0.0.0:8000'
+
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
