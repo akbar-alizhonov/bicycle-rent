@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+from bicycle.managers import RentalManager
+
 
 class Bicycle(models.Model):
 
@@ -39,6 +41,8 @@ class Rental(models.Model):
         blank=True,
         null=True,
     )
+
+    objects = RentalManager()
 
     def __str__(self) -> str:
         return f'Велосипед {self.bicycle.name} арендован {self.user.username}'
